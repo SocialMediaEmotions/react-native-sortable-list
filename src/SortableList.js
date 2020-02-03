@@ -74,7 +74,12 @@ export default class SortableList extends Component {
     scrollEnabled: this.props.scrollEnabled
   };
 
-  componentWillMount() {
+  constructor(props) {
+    super(props);
+    this._resolveLayout();
+  }
+
+  _resolveLayout(){
     this.state.order.forEach((key) => {
       this._rowsLayouts[key] = new Promise((resolve) => {
         this._resolveRowLayout[key] = resolve;
@@ -97,9 +102,14 @@ export default class SortableList extends Component {
     this._onUpdateLayouts();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {data, order} = this.state;
-    let {data: nextData, order: nextOrder} = nextProps;
+  componentDidUpdate(prevProps, prevState) {
+    const { data, order } = this.state;
+    const { data: prevData } = prevState;
+    let { data: nextData, order: nextOrder } = this.props;
+
+    if (data && prevData && !shallowEqual(data, prevData)) {
+      this._onUpdateLayouts();
+    }
 
     if (data && nextData && !shallowEqual(data, nextData)) {
       nextOrder = nextOrder || Object.keys(nextData)
@@ -119,16 +129,7 @@ export default class SortableList extends Component {
       });
 
     } else if (order && nextOrder && !shallowEqual(order, nextOrder)) {
-      this.setState({order: nextOrder});
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {data} = this.state;
-    const {data: prevData} = prevState;
-
-    if (data && prevData && !shallowEqual(data, prevData)) {
-      this._onUpdateLayouts();
+      this.setState({ order: nextOrder });
     }
   }
 
@@ -160,7 +161,7 @@ export default class SortableList extends Component {
 
     for (const rowKey of order) {
       if (rowKey === key) {
-          break;
+        break;
       }
 
       keyX += rowsLayouts[rowKey].width;
@@ -614,7 +615,7 @@ export default class SortableList extends Component {
   };
 
   _onScroll = ({nativeEvent: {contentOffset}}) => {
-      this._contentOffset = contentOffset;
+    this._contentOffset = contentOffset;
   };
 
   _onRefContainer = (component) => {
