@@ -74,12 +74,7 @@ export default class SortableList extends Component {
     scrollEnabled: this.props.scrollEnabled
   };
 
-  constructor(props) {
-    super(props);
-    this._resolveLayout();
-  }
-
-  _resolveLayout(){
+  componentDidMount() {
     this.state.order.forEach((key) => {
       this._rowsLayouts[key] = new Promise((resolve) => {
         this._resolveRowLayout[key] = resolve;
@@ -96,9 +91,6 @@ export default class SortableList extends Component {
         this._resolveFooterLayout = resolve;
       });
     }
-  }
-
-  componentDidMount() {
     this._onUpdateLayouts();
   }
 
