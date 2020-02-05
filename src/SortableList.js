@@ -109,9 +109,10 @@ export default class SortableList extends Component {
     this._onUpdateLayouts();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {data, order} = this.state;
-    let {data: nextData, order: nextOrder} = nextProps;
+  componentDidUpdate(prevProps, prevState) {
+    const {data, order, scrollEnabled} = this.state;
+    let {data: nextData, order: nextOrder} = this.props;
+    const {data: prevData} = prevState;
 
     if (data && nextData && !shallowEqual(data, nextData)) {
       nextOrder = nextOrder || Object.keys(nextData)
@@ -141,11 +142,6 @@ export default class SortableList extends Component {
     } else if (order && nextOrder && !shallowEqual(order, nextOrder)) {
       this.setState({order: nextOrder});
     }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {data, scrollEnabled} = this.state;
-    const {data: prevData} = prevState;
 
     if (data && prevData && !shallowEqual(data, prevData)) {
       this._onUpdateLayouts();
